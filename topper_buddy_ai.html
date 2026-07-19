@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Topper Buddy AI - Premium UI</title>
+<meta name="description" content="Topper Frnd AI – Your premium AI study companion for notes, quizzes, code help, planning, and rapid revision.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary-color: #1a73e8;
+  --primary-hover: #1557b0;
+  --bg-app: #f4f6fb;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --user-msg-bg: #dcecff;
+  --ai-msg-bg: #f7f7f8;
+  --text-main: #202124;
+  --text-muted: #5f6368;
+  --border-color: #dadce0;
+  --shadow-sm: 0 2px 6px rgba(0,0,0,.05);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.08);
+  --shadow-lg: 0 14px 40px rgba(0,0,0,.12);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --transition-speed: .25s;
+  --font-main: "Inter", Arial, sans-serif;
+  --font-code: "Fira Code", Consolas, monospace;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+/* ── Scrollbars ──────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #bdc1c6; }
+/* ── Sidebar ─────────────────────────────────── */
+.sidebar {
+  width: 280px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  z-index: 10;
+  overflow: hidden;
+}
+.logo {
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--primary-color);
+  font-family: var(--font-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 14px 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.new-chat-btn {
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px dashed var(--primary-color);
+  background-color: transparent;
+  color: var(--primary-color);
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all var(--transition-speed) ease;
+  margin-bottom: 4px;
+}
+.new-chat-btn:hover {
+  background-color: rgba(26,115,232,.07);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.menu-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--text-muted);
+  padding: 4px 8px 2px 8px;
+  font-family: var(--font-main);
+}
+.menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.menu {
+  padding: 11px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: var(--font-main);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  transition: background-color var(--transition-speed) ease,
+              color var(--transition-speed) ease,
+              box-shadow var(--transition-speed) ease;
+}
+.menu:hover {
+  background-color: #f1f3f4;
+}
+.menu.active {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(26,115,232,.28);
+}
+/* ── History ─────────────────────────────────── */
+.history {
+  margin-top: 10px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.history h4 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  padding-left: 8px;
+  font-family: var(--font-main);
+}
+#history {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow-y: auto;
+  flex: 1;
+  padding-right: 2px;
+}
+#history div {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background-color: #f8f9fa;
+  font-family: var(--font-main);
+  font-size: 13px;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: background-color var(--transition-speed) ease,
+              border-color var(--transition-speed) ease;
+}
+#history div:hover {
+  background-color: #eef2fb;
+  border-left-color: var(--primary-color);
+}
+#history div.active-hist {
+  background-color: #dde8fb;
+  border-left-color: var(--primary-color);
+  font-weight: 500;
+}
+/* ── Main Area ───────────────────────────────── */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  height: 100%;
+  overflow: hidden;
+}
+.card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,.03);
+}
+.card-header {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+#title {
+  font-family: var(--font-main);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--text-main);
+}
+#desc {
+  font-family: var(--font-main);
+  font-size: 14px;
+  color: var(--text-muted);
+}
+/* ── Chat Log ────────────────────────────────── */
+#chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 4px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  scroll-behavior: smooth;
+}
+.msg-wrapper {
+  display: flex;
+  width: 100%;
+  animation: fadeInUp .3s cubic-bezier(.16,1,.3,1) both;
+}
+.msg-wrapper.user-wrapper { justify-content: flex-end; }
+.msg-wrapper.ai-wrapper   { justify-content: flex-start; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.msg {
+  max-width: 760px;
+  width: fit-content;
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-main);
+  font-size: 15px;
+  line-height: 1.65;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+@media (max-width: 900px) {
+  .msg { max-width: 90%; }
+}
+@media (max-width: 600px) {
+  .sidebar { display: none; }
+  .main { padding: 12px; }
+  .msg { max-width: 95%; font-size: 14px; }
+}
+.msg.user {
+  background-color: var(--user-msg-bg);
+  color: #1a65cc;
+  border-bottom-right-radius: 4px;
+}
+.msg.ai {
+  background-color: var(--ai-msg-bg);
+  color: var(--text-main);
+  border-bottom-left-radius: 4px;
+  white-space: pre-wrap;
+}
+/* ── Markdown Styles inside .ai ─────────────── */
+.ai p { margin-bottom: 10px; }
+.ai p:last-child { margin-bottom: 0; }
+.ai h1, .ai h2, .ai h3, .ai h4, .ai h5, .ai h6 {
+  font-family: var(--font-main);
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #111;
+  line-height: 1.3;
+}
+.ai h1:first-child,
+.ai h2:first-child,
+.ai h3:first-child { margin-top: 0; }
+.ai h1 { font-size: 20px; }
+.ai h2 { font-size: 18px; }
+.ai h3 { font-size: 16px; }
+.ai ul, .ai ol {
+  margin-left: 22px;
+  margin-bottom: 10px;
+}
+.ai li { margin-bottom: 4px; }
+.ai blockquote {
+  border-left: 4px solid var(--primary-color);
+  padding: 8px 14px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 12px 0;
+  background: rgba(26,115,232,.04);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.ai hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 16px 0;
+}
+/* Code blocks */
+.ai pre {
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-family: var(--font-code);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 12px 0;
+  box-shadow: inset 0 1px 6px rgba(0,0,0,.25);
+  white-space: pre;
+}
+.ai code {
+  font-family: var(--font-code);
+  font-size: 13px;
+  background-color: rgba(0,0,0,.07);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.ai pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  white-space: inherit;
+}
+/* Tables */
+.ai .table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 14px 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+.ai table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: var(--font-main);
+  font-size: 14px;
+}
+.ai th, .ai td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+.ai th {
+  background-color: #f1f3f4;
+  font-weight: 600;
+}
+.ai tr:last-child td { border-bottom: none; }
+.ai tr:nth-child(even) td { background-color: #fafbfc; }
+/* Images inside AI */
+.ai img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  margin: 12px 0;
+  display: block;
+}
+/* ── Typing Indicator ────────────────────────── */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 14px 18px;
+}
+.typing-indicator span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  animation: typingBounce 1.2s infinite ease-in-out;
+}
+.typing-indicator span:nth-child(2) { animation-delay: .2s; }
+.typing-indicator span:nth-child(3) { animation-delay: .4s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+  30%           { transform: translateY(-6px); opacity: 1; }
+}
+/* ── Welcome Card ────────────────────────────── */
+.welcome-card {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 100%);
+  border: 1px solid #c5d5f8;
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  max-width: 560px;
+  font-family: var(--font-main);
+  animation: fadeInUp .4s cubic-bezier(.16,1,.3,1) both;
+}
+.welcome-card .wc-emoji {
+  font-size: 32px;
+  margin-bottom: 10px;
+  display: block;
+}
+.welcome-card h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+}
+.welcome-card p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+.welcome-card p:last-child { margin-bottom: 0; }
+/* ── FILE UPLOAD: Attachment Preview Strip ───── */
+#attachment-strip {
+  display: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 4px 4px 4px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 6px;
+}
+#attachment-strip.has-files {
+  display: flex;
+}
+/* Individual file chip */
+.file-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #eef2fb 0%, #e4ecff 100%);
+  border: 1px solid #c5d5f8;
+  border-radius: 10px;
+  padding: 6px 10px 6px 8px;
+  font-family: var(--font-main);
+  font-size: 13px;
+  color: var(--text-main);
+  animation: chipIn .2s cubic-bezier(.16,1,.3,1) both;
+  max-width: 220px;
+  position: relative;
+}
+@keyframes chipIn {
+  from { opacity: 0; transform: scale(.88) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.file-chip .chip-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.file-chip .chip-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+  font-weight: 500;
+}
+.file-chip .chip-size {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* Image thumbnail inside chip */
+.file-chip .chip-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid #c5d5f8;
+}
+/* Remove (×) button */
+.chip-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1;
+  padding: 0 0 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  transition: background-color .15s, color .15s;
+}
+.chip-remove:hover {
+  background-color: rgba(26,115,232,.15);
+  color: var(--primary-color);
+}
+/* ── FILE UPLOAD: Attachment button ─────────── */
+button#attachBtn {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-speed), color var(--transition-speed);
+  flex-shrink: 0;
+}
+button#attachBtn:hover {
+  background-color: rgba(26,115,232,.08);
+  color: var(--primary-color);
+}
+button#attachBtn svg {
+  pointer-events: none;
+}
+/* ── Bottom Input ────────────────────────────── */
+.bottom-wrapper {
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  overflow: hidden;
+}
+.bottom-wrapper:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(26,115,232,.1);
+}
+.bottom {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  padding: 8px 10px;
+}
+textarea#input {
+  flex: 1;
+  min-height: 50px;
+  max-height: 180px;
+  padding: 10px 6px;
+  border: none;
+  outline: none;
+  resize: none;
+  font-family: var(--font-main);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-main);
+  background-color: transparent;
+  overflow-y: auto;
+}
+button#sendBtn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  outline: none;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color var(--transition-speed), transform .12s;
+  flex-shrink: 0;
+}
+button#sendBtn:hover { background-color: var(--primary-hover); }
+button#sendBtn:active { transform: scale(.94); }
+button#sendBtn:disabled {
+  background-color: var(--border-color);
+  cursor: not-allowed;
+  transform: none;
+}
+/* ── FILE UPLOAD: Drag-and-Drop overlay ──────── */
+#drop-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(26,115,232,.08);
+  border: 2.5px dashed var(--primary-color);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .18s ease;
+  font-family: var(--font-main);
+}
+#drop-overlay.visible {
+  opacity: 1;
+  pointer-events: none;
+}
+#drop-overlay .drop-icon {
+  font-size: 48px;
+  animation: dropBounce 1s infinite ease-in-out;
+}
+@keyframes dropBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+#drop-overlay p {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+#drop-overlay span {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+/* .card needs position:relative to contain the overlay */
+.card { position: relative; }
+/* ── FILE UPLOAD: In-chat attachment cards ───── */
+.chat-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.chat-att-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,.7);
+  border: 1px solid rgba(26,115,232,.2);
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-family: var(--font-main);
+  font-size: 13px;
+  color: #1a65cc;
+  font-weight: 500;
+  max-width: 220px;
+}
+.chat-att-card .att-icon { font-size: 18px; line-height: 1; }
+.chat-att-card .att-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+.chat-att-card img.att-thumb {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(26,115,232,.15);
+}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="logo">🎓 Topper buddy AI</div>
+  <button class="new-chat-btn" onclick="newChat()">＋ New Chat</button>
+  <div class="menu-label">Tools</div>
+  <div class="menu-list">
+    <div class="menu active" id="menu-Coach"    onclick="switchTool('Coach',this)">🤖 Study Coach</div>
+    <div class="menu"        id="menu-Code"     onclick="switchTool('Code',this)">💻 Code Mentor</div>
+    <div class="menu"        id="menu-Notes"    onclick="switchTool('Notes',this)">📝 Smart Notes</div>
+    <div class="menu"        id="menu-Quiz"     onclick="switchTool('Quiz',this)">🎯 Quiz Engine</div>
+    <div class="menu"        id="menu-Planner"  onclick="switchTool('Planner',this)">📅 Planner</div>
+    <div class="menu"        id="menu-Practice" onclick="switchTool('Practice',this)">⚡ Practice</div>
+  </div>
+  <div class="history">
+    <h4>History</h4>
+    <div id="history"></div>
+  </div>
+</div>
+<div class="main">
+  <div class="card" id="main-card">
+    <!-- Drag-and-Drop overlay -->
+    <div id="drop-overlay">
+      <div class="drop-icon">📎</div>
+      <p>Drop files here</p>
+      <span>Images, PDF, DOCX, TXT, CSV, PPTX, MD</span>
+    </div>
+    <div class="card-header">
+      <h1 id="title">🤖 AI Study Coach</h1>
+      <p  id="desc">Get AI explanations.</p>
+    </div>
+    <div id="chat"></div>
+    <!-- Hidden file input -->
+    <input type="file" id="fileInput" multiple accept=".png,.jpg,.jpeg,.webp,.pdf,.docx,.txt,.csv,.pptx,.md" style="display:none">
+    <!-- Bottom input wrapper -->
+    <div class="bottom-wrapper">
+      <!-- Attachment preview strip -->
+      <div id="attachment-strip"></div>
+      <div class="bottom">
+        <!-- Attachment button -->
+        <button id="attachBtn" title="Attach files" onclick="document.getElementById('fileInput').click()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+          </svg>
+        </button>
+        <textarea id="input" placeholder="Ask your Topper Frnd anything..." rows="1"></textarea>
+        <button id="sendBtn" onclick="send()" title="Send message">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   Config
+   ═══════════════════════════════════════════════════════════════ */
+const cfg = {
+  Coach:   { t: "🤖 AI Study Coach",      d: "Get AI explanations.",      p: "Ask your Topper Frnd anything...", c: "#1a73e8" },
+  Code:    { t: "💻 Code Mentor",          d: "Debug and generate code.",   p: "Ask your coding question...",      c: "#2e7d32" },
+  Notes:   { t: "📝 Smart Notes",          d: "Create concise notes.",      p: "Enter topic...",                    c: "#7b1fa2" },
+  Quiz:    { t: "🎯 Quiz Engine",          d: "Generate quizzes.",          p: "Enter quiz topic...",               c: "#ef6c00" },
+  Planner: { t: "📅 Smart Planner",        d: "Plan your studies.",         p: "Study goals...",                    c: "#00897b" },
+  Practice:{ t: "⚡ Lightning Practice",   d: "Rapid revision.",            p: "Subject...",                        c: "#c62828" }
+};
+let current = "Coach";
+const titleEl   = document.getElementById("title");
+const descEl    = document.getElementById("desc");
+const chatEl    = document.getElementById("chat");
+const historyEl = document.getElementById("history");
+const inputEl   = document.getElementById("input");
+const sendBtn   = document.getElementById("sendBtn");
+const histories = { Coach:[], Code:[], Notes:[], Quiz:[], Planner:[], Practice:[] };
+/* ── File upload state ──────────────────────── */
+let pendingFiles = [];   // Array of File objects waiting to be sent
+/* ═══════════════════════════════════════════════════════════════
+   Marked config
+   ═══════════════════════════════════════════════════════════════ */
+marked.setOptions({ breaks: true, gfm: true });
+const renderer = new marked.Renderer();
+renderer.table = function(header, body) {
+  return `<div class="table-wrapper"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
+};
+marked.use({ renderer });
+/* ═══════════════════════════════════════════════════════════════
+   Welcome Card
+   ═══════════════════════════════════════════════════════════════ */
+function welcomeCard(toolName) {
+  return `
+  <div class="msg-wrapper ai-wrapper">
+    <div class="welcome-card">
+      <span class="wc-emoji">👋</span>
+      <h2>Welcome to Topper Frnd AI</h2>
+      <p>I'm ready to help you study, write code, create quizzes, prepare notes and plan your learning.</p>
+      <p>You are using <strong>${toolName}</strong>. Ask me anything to begin.</p>
+      <p style="margin-top:10px;font-size:13px;color:#1a73e8;">📎 You can now attach files (PDF, DOCX, images, CSV, TXT, PPTX, MD) using the button below.</p>
+    </div>
+  </div>`;
+}
+/* ═══════════════════════════════════════════════════════════════
+   Auto-grow Textarea
+   ═══════════════════════════════════════════════════════════════ */
+inputEl.addEventListener("input", function () {
+  this.style.height = "50px";
+  this.style.height = Math.min(this.scrollHeight, 180) + "px";
+});
+/* ═══════════════════════════════════════════════════════════════
+   File icon helper
+   ═══════════════════════════════════════════════════════════════ */
+function fileIcon(file) {
+  const ext = file.name.split(".").pop().toLowerCase();
+  const map = {
+    pdf:  "📄", docx: "📝", txt:  "📃", csv:  "📊",
+    pptx: "📑", md:   "📋",
+    png:  "🖼", jpg:  "🖼", jpeg: "🖼", webp: "🖼"
+  };
+  return map[ext] || "📎";
+}
+/* ── Format bytes ──────────────────────────── */
+function fmtBytes(n) {
+  if (n < 1024) return n + " B";
+  if (n < 1048576) return (n/1024).toFixed(1) + " KB";
+  return (n/1048576).toFixed(1) + " MB";
+}
+/* ── Is image? ─────────────────────────────── */
+function isImage(file) {
+  return file.type.startsWith("image/");
+}
+/* ═══════════════════════════════════════════════════════════════
+   Attachment strip — renders pending file chips above textarea
+   ═══════════════════════════════════════════════════════════════ */
+function renderStrip() {
+  const strip = document.getElementById("attachment-strip");
+  strip.innerHTML = "";
+  if (pendingFiles.length === 0) {
+    strip.classList.remove("has-files");
+    return;
+  }
+  strip.classList.add("has-files");
+  pendingFiles.forEach((file, idx) => {
+    const chip = document.createElement("div");
+    chip.className = "file-chip";
+    if (isImage(file)) {
+      const thumb = document.createElement("img");
+      thumb.className = "chip-thumb";
+      thumb.alt = file.name;
+      const reader = new FileReader();
+      reader.onload = e => { thumb.src = e.target.result; };
+      reader.readAsDataURL(file);
+      chip.appendChild(thumb);
+    } else {
+      const iconEl = document.createElement("span");
+      iconEl.className = "chip-icon";
+      iconEl.textContent = fileIcon(file);
+      chip.appendChild(iconEl);
+    }
+    const nameEl = document.createElement("span");
+    nameEl.className = "chip-name";
+    nameEl.title = file.name;
+    nameEl.textContent = file.name;
+    chip.appendChild(nameEl);
+    const sizeEl = document.createElement("span");
+    sizeEl.className = "chip-size";
+    sizeEl.textContent = fmtBytes(file.size);
+    chip.appendChild(sizeEl);
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "chip-remove";
+    removeBtn.title = "Remove file";
+    removeBtn.innerHTML = "×";
+    removeBtn.onclick = () => {
+      pendingFiles.splice(idx, 1);
+      document.getElementById("fileInput").value = "";
+      renderStrip();
+    };
+    chip.appendChild(removeBtn);
+    strip.appendChild(chip);
+  });
+}
+/* ═══════════════════════════════════════════════════════════════
+   File input change handler
+   ═══════════════════════════════════════════════════════════════ */
+document.getElementById("fileInput").addEventListener("change", function () {
+  const newFiles = Array.from(this.files);
+  newFiles.forEach(f => {
+    if (!pendingFiles.find(x => x.name === f.name && x.size === f.size)) {
+      pendingFiles.push(f);
+    }
+  });
+  renderStrip();
+});
+/* ═══════════════════════════════════════════════════════════════
+   Drag-and-Drop support on the main card
+   ═══════════════════════════════════════════════════════════════ */
+const cardEl    = document.getElementById("main-card");
+const overlayEl = document.getElementById("drop-overlay");
+let dragCounter = 0;
+cardEl.addEventListener("dragenter", e => {
+  e.preventDefault();
+  dragCounter++;
+  overlayEl.classList.add("visible");
+});
+cardEl.addEventListener("dragleave", e => {
+  e.preventDefault();
+  dragCounter--;
+  if (dragCounter === 0) overlayEl.classList.remove("visible");
+});
+cardEl.addEventListener("dragover", e => {
+  e.preventDefault();
+});
+cardEl.addEventListener("drop", e => {
+  e.preventDefault();
+  dragCounter = 0;
+  overlayEl.classList.remove("visible");
+  const droppedFiles = Array.from(e.dataTransfer.files);
+  const allowed = ["image/png","image/jpeg","image/webp",
+                   "application/pdf",
+                   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                   "text/plain","text/csv","text/markdown",
+                   "application/vnd.openxmlformats-officedocument.presentationml.presentation"];
+  const allowedExt = ["png","jpg","jpeg","webp","pdf","docx","txt","csv","md","pptx"];
+  droppedFiles.forEach(f => {
+    const ext = f.name.split(".").pop().toLowerCase();
+    if (allowed.includes(f.type) || allowedExt.includes(ext)) {
+      if (!pendingFiles.find(x => x.name === f.name && x.size === f.size)) {
+        pendingFiles.push(f);
+      }
+    }
+  });
+  renderStrip();
+});
+/* ═══════════════════════════════════════════════════════════════
+   Render
+   ═══════════════════════════════════════════════════════════════ */
+function render() {
+  const x = cfg[current];
+  titleEl.textContent   = x.t;
+  descEl.textContent    = x.d;
+  inputEl.placeholder   = x.p;
+  document.documentElement.style.setProperty('--primary-color', x.c);
+  chatEl.innerHTML = "";
+  if (!histories[current].length) {
+    chatEl.innerHTML = welcomeCard(x.t);
+  } else {
+    histories[current].forEach(m => {
+      /* ── User bubble ── */
+      let attachHtml = "";
+      if (m.files && m.files.length) {
+        const cards = m.files.map(fi => {
+          if (fi.isImage && fi.dataUrl) {
+            return `<div class="chat-att-card">
+                      <img class="att-thumb" src="${fi.dataUrl}" alt="${escapeHtml(fi.name)}">
+                      <span class="att-name" title="${escapeHtml(fi.name)}">${escapeHtml(fi.name)}</span>
+                    </div>`;
+          }
+          return `<div class="chat-att-card">
+                    <span class="att-icon">${fi.icon}</span>
+                    <span class="att-name" title="${escapeHtml(fi.name)}">${escapeHtml(fi.name)}</span>
+                  </div>`;
+        }).join("");
+        attachHtml = `<div class="chat-attachments">${cards}</div>`;
+      }
+      chatEl.innerHTML += `
+        <div class="msg-wrapper user-wrapper">
+          <div class="msg user">
+            ${attachHtml}
+            ${escapeHtml(m.q)}
+          </div>
+        </div>`;
+      /* ── AI bubble ── */
+      if (m.thinking) {
+        chatEl.innerHTML += `
+          <div class="msg-wrapper ai-wrapper">
+            <div class="msg ai">
+              <div class="typing-indicator">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>`;
+      } else {
+        chatEl.innerHTML += `
+          <div class="msg-wrapper ai-wrapper">
+            <div class="msg ai">${marked.parse(m.a)}</div>
+          </div>`;
+      }
+    });
+  }
+  historyEl.innerHTML = histories[current]
+    .map((m, i) => `<div onclick="jumpTo(${i})" title="${escapeHtml(m.q)}">${escapeHtml(m.q)}</div>`)
+    .join("");
+  inputEl.value = "";
+  inputEl.style.height = "50px";
+  scrollBottom();
+}
+function scrollBottom() {
+  requestAnimationFrame(() => { chatEl.scrollTop = chatEl.scrollHeight; });
+}
+function escapeHtml(str) {
+  return str
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+/* ═══════════════════════════════════════════════════════════════
+   switchTool
+   ═══════════════════════════════════════════════════════════════ */
+function switchTool(t, e) {
+  current = t;
+  document.querySelectorAll(".menu").forEach(m => m.classList.remove("active"));
+  e.classList.add("active");
+  render();
+}
+/* ═══════════════════════════════════════════════════════════════
+   Build file metadata snapshots for history storage
+   ═══════════════════════════════════════════════════════════════ */
+function snapshotFiles(files) {
+  return Promise.all(files.map(f => new Promise(resolve => {
+    const meta = {
+      name: f.name,
+      size: f.size,
+      icon: fileIcon(f),
+      isImage: isImage(f),
+      dataUrl: null
+    };
+    if (isImage(f)) {
+      const reader = new FileReader();
+      reader.onload = e => { meta.dataUrl = e.target.result; resolve(meta); };
+      reader.readAsDataURL(f);
+    } else {
+      resolve(meta);
+    }
+  })));
+}
+/* ═══════════════════════════════════════════════════════════════
+   send  — uses FormData multipart/form-data, never JSON
+   ═══════════════════════════════════════════════════════════════ */
+async function send() {
+  const query = inputEl.value.trim();
+  if (!query && pendingFiles.length === 0) return;  // nothing to send
+  /* Snapshot file metadata for the history entry */
+  const fileMetas = await snapshotFiles(pendingFiles);
+  /* Clone the files array before clearing */
+  const filesToSend = [...pendingFiles];
+  /* Push to history with thinking state */
+  histories[current].push({ q: query || "(file upload)", a: "", thinking: true, files: fileMetas });
+  /* Clear pending files and strip */
+  pendingFiles = [];
+  document.getElementById("fileInput").value = "";
+  renderStrip();
+  render();
+  sendBtn.disabled = true;
+  try {
+    /* ── Build FormData — multipart/form-data, NOT JSON ── */
+    const formData = new FormData();
+    formData.append("message", query);          // text field
+    formData.append("tool", current);            // selected tool name
+    for (const file of filesToSend) {
+      formData.append("files", file, file.name); // repeated "files" key
+    }
+    /* ── POST to FastAPI backend ── */
+    const response = await fetch("http://127.0.0.1:8000/chat", {
+      method: "POST",
+      body: formData   // browser sets Content-Type: multipart/form-data automatically
+      // Never set Content-Type manually here — it breaks the boundary
+    });
+    if (!response.ok) {
+      /* Non-2xx HTTP status → server error */
+      let serverMsg = "Server Error";
+      try {
+        const errData = await response.json();
+        if (errData && errData.detail) serverMsg = "Server Error: " + errData.detail;
+      } catch (_) { /* ignore parse failures */ }
+      throw new Error(serverMsg);
+    }
+    const data = await response.json();
+    histories[current][histories[current].length - 1].a = data.response || data.reply || "No response received";
+    histories[current][histories[current].length - 1].thinking = false;
+  } catch (error) {
+    /* Network failure → backend unavailable; HTTP error → server error */
+    let errorMsg;
+    if (error instanceof TypeError) {
+      // TypeError from fetch = network failure (backend not running / CORS / etc.)
+      errorMsg = "❌ Unable to connect to backend. Please make sure the server is running at http://127.0.0.1:8000";
+    } else {
+      errorMsg = "❌ " + (error.message || "Server Error");
+    }
+    histories[current][histories[current].length - 1].a = errorMsg;
+    histories[current][histories[current].length - 1].thinking = false;
+    console.error("Topper Buddy send error:", error);
+  }
+  sendBtn.disabled = false;
+  render();
+}
+/* ═══════════════════════════════════════════════════════════════
+   newChat
+   ═══════════════════════════════════════════════════════════════ */
+function newChat() {
+  histories[current] = [];
+  pendingFiles = [];
+  document.getElementById("fileInput").value = "";
+  renderStrip();
+  render();
+}
+/* ═══════════════════════════════════════════════════════════════
+   jumpTo
+   ═══════════════════════════════════════════════════════════════ */
+function jumpTo(idx) {
+  const items = historyEl.querySelectorAll("div");
+  items.forEach((el, i) => el.classList.toggle("active-hist", i === idx));
+  const wrappers = chatEl.querySelectorAll(".msg-wrapper.user-wrapper");
+  if (wrappers[idx]) wrappers[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+}
+/* ═══════════════════════════════════════════════════════════════
+   Enter to send
+   ═══════════════════════════════════════════════════════════════ */
+inputEl.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+/* ═══════════════════════════════════════════════════════════════
+   Init
+   ═══════════════════════════════════════════════════════════════ */
+render();
+</script>
+</body>
+</html>
