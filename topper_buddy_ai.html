@@ -1023,7 +1023,7 @@ async function send() {
       formData.append("files", file, file.name); // repeated "files" key
     }
     /* ── POST to FastAPI backend ── */
-    const response = await fetch("https://toppr-buddy-ai.onrender.com/", {
+    const response = await fetch("https://toppr-buddy-ai.onrender.com/chat", {
       method: "POST",
       body: formData   // browser sets Content-Type: multipart/form-data automatically
       // Never set Content-Type manually here — it breaks the boundary
