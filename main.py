@@ -73,4 +73,4 @@ async def chat(
     return {
         "response": answer
     }
-    uvicorn main:app --host 0.0.0.0 --port $PORT
+ 
